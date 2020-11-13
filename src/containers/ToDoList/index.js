@@ -1,15 +1,39 @@
 import React, { Component } from 'react'
 import ToDoItem from '../../components/ToDoItem/index.js'
 import NewTodoForm from '../../components/NewToDoForm/index.js'
+import styled from 'styled-components'
 
+const Container = styled.div`
+  background: #2b2e39;
+  margin: 0 auto;
+  width: 80%;
+  max-width: 600px;
+  padding: 14px;
+  border-radius: 14px;
+  margin-top: 14px;
+`
+
+const Header = styled.h1`
+  color: #fff;
+`
+
+const RemoveButton = styled.button`
+  border-radius: 10px;
+  background: red;
+  padding: 5px;
+  color: #fff;
+  margin-bottom: 10px;
+`
 
 class ToDoList extends Component {
 
+    componentDidMount = () => {
+      fetch('http://localhost:8000/todo_items')
+    .then(response => response.json()).then(json => this.setState({tasks: json}))
+    }
+
     static defaultProps = {
-      tasks: [
-        {done: true, text: 'Record a ReactJS video'},
-        {done: false, text: 'Go for a walk'}
-      ],
+      tasks: [],
       title: "My stuff"
     }
 
@@ -31,19 +55,25 @@ class ToDoList extends Component {
         draft: ""
       })
     }
+
+    removeAllTasks = () => {
+      this.setState({tasks: [], draft: ""})
+    }
   
     render() {
       const { title } = this.props
       const { tasks } = this.state
       return (
-        <div>
-          <h1>{title}</h1>
+        <Container>
+          <Header>{title}</Header>
+          <RemoveButton onClick={this.removeAllTasks}>Remove All</RemoveButton>
           {
-            tasks.map(task => <ToDoItem text={task.text} done={task.done}/>)
+            tasks.map(task => <ToDoItem id={task.id} key={task.key} text={task.title} done={task.done}/>)
           }
           <NewTodoForm onSubmit={this.addTask} onChange={this.updateDraft} />
+          
 
-        </div>
+        </Container>
       )
     }
   }
