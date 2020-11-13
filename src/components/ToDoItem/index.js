@@ -28,10 +28,10 @@ class ToDoItem extends Component {
 
   render() {
 
-  const {text} = this.props
+  const {title} = this.props
   return(
   <Item onClick={this.toggleDone} done={this.state.done}>
-    {text}
+    {title}
   </Item>
   )
   }

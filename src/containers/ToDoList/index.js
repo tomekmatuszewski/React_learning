@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import ToDoItem from '../../components/ToDoItem/index.js'
 import NewTodoForm from '../../components/NewToDoForm/index.js'
 import styled from 'styled-components'
+import * as ToDoItemApi from '../../helpers/toDoItemApi'
 
 const Container = styled.div`
   background: #2b2e39;
@@ -27,9 +28,9 @@ const RemoveButton = styled.button`
 
 class ToDoList extends Component {
 
-    componentDidMount = () => {
-      fetch('http://localhost:8000/todo_items')
-    .then(response => response.json()).then(json => this.setState({tasks: json}))
+    componentDidMount = async () => {
+      const tasks = await ToDoItemApi.getAll()
+      this.setState({tasks: tasks})
     }
 
     static defaultProps = {
@@ -48,7 +49,7 @@ class ToDoList extends Component {
   
     addTask = () => {
       const new_item = {
-        text: this.state.draft
+        title: this.state.draft,
       }
       this.setState({
         tasks: [...this.state.tasks, new_item],
@@ -68,7 +69,7 @@ class ToDoList extends Component {
           <Header>{title}</Header>
           <RemoveButton onClick={this.removeAllTasks}>Remove All</RemoveButton>
           {
-            tasks.map(task => <ToDoItem id={task.id} key={task.key} text={task.title} done={task.done}/>)
+            tasks.map(task => <ToDoItem key={task.id} title={task.title} done={task.done}/>)
           }
           <NewTodoForm onSubmit={this.addTask} onChange={this.updateDraft} />
           
